@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,8 +17,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity implements MoviesListFragment.OnMoviesListInteractionListener, NoInternetFragment.OnRetryInteractionListener {
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,12 +68,13 @@ public class MainActivity extends AppCompatActivity implements MoviesListFragmen
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private boolean isInternetConnected() {
 
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        NetworkInfo networkInfo = Objects.requireNonNull(connectivityManager).getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
             return true;
@@ -102,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements MoviesListFragmen
         startActivity(intentToDetails);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onRetryInteraction() {
 
@@ -114,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements MoviesListFragmen
             fragmentTransaction.replace(R.id.id_movies_container, moviesListFragment)
                     .commit();
         } else if (!isInternetConnected()) {
-            Toast.makeText(this," Still no internet connection   retry please" , Toast.LENGTH_SHORT).show();
+            Toast.makeText(this," Still no internet connection  Verify your connection and retry please" , Toast.LENGTH_SHORT).show();
         }
 
     }

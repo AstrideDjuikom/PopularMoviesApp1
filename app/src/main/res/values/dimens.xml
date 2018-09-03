@@ -3,7 +3,6 @@
     <dimen name="cardView_cornerRadius">6dp</dimen>
     <dimen name="movie_poster_height">254dp</dimen>
     <dimen name="movie_text_size">15sp</dimen>
-    <dimen name="movie_text_elevation">3dp</dimen>
     <dimen name="no_connection_button_text_size">16sp</dimen>
     <dimen name="details_relative_margin_left">15dp</dimen>
     <dimen name="details_relative_margin_right">15dp</dimen>

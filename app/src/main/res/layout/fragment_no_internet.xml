@@ -13,7 +13,6 @@
         android:gravity="center">
 
         <TextView
-            android:id="@+id/no_connection_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="25sp"
@@ -24,6 +23,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/no_connection_button_text_size"
-            android:text="@string/retry"/>
+            android:text="@string/retry"
+            android:textColor="@color/colorAccent"
+            android:layout_gravity="center"
+            android:shadowColor="@color/colorPrimary"/>
+
+
     </LinearLayout>
 </FrameLayout>

@@ -17,7 +17,8 @@
             android:layout_height="@dimen/movie_poster_height"
             android:layout_centerHorizontal="true"
             android:adjustViewBounds="true"
-            android:scaleType="fitStart"/>
+            android:scaleType="fitStart"
+            android:contentDescription="TODO" />
 
         <TextView
             android:id="@+id/movie_title"

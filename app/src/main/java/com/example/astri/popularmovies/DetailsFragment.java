@@ -2,6 +2,7 @@ package com.example.astri.popularmovies;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -44,7 +45,7 @@ public class DetailsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_details, container, false);
@@ -52,23 +53,23 @@ public class DetailsFragment extends Fragment {
         if (movie
                 != null) {
 
-            ImageView posterView = (ImageView) view.findViewById(R.id.poster);
+            ImageView posterView = view.findViewById(R.id.poster);
             Glide.with(getActivity()).load(movie
                     .getPosterUri()).into(posterView);
 
-            TextView titleView = (TextView) view.findViewById(R.id.title_content);
+            TextView titleView = view.findViewById(R.id.title_content);
             titleView.setText(movie
                     .getTitle());
 
-            TextView releaseDateView = (TextView) view.findViewById(R.id.release_date_content);
+            TextView releaseDateView = view.findViewById(R.id.release_date_content);
             releaseDateView.setText(movie
                     .getReleaseDate());
 
-            TextView averageView = (TextView) view.findViewById(R.id.vote_average_content);
+            TextView averageView = view.findViewById(R.id.vote_average_content);
             averageView.setText(movie
                     .getVoteAverage());
 
-            TextView overviewView = (TextView) view.findViewById(R.id.overview_content);
+            TextView overviewView = view.findViewById(R.id.overview_content);
 
             // default text: @string/overview_not_available
             if (!TextUtils.isEmpty(movie

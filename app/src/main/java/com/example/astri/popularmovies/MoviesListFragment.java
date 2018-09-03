@@ -5,10 +5,12 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.SyncStateContract;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,8 +31,10 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class MoviesListFragment extends Fragment {
 
@@ -38,8 +42,8 @@ public class MoviesListFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = AppConstants.PORTRAIT_COLUMN_COUNT;
     private OnMoviesListInteractionListener mListener;
-    private MoviesAdapter mMoviesAdapter;
-    private List<Movie> mMoviesList;
+    public MoviesAdapter mMoviesAdapter;
+    public List<Movie> mMoviesList;
     private String mLastUpdateOrder;
 
     /**
@@ -70,7 +74,7 @@ public class MoviesListFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(AppConstants.SAVE_LAST_UPDATE_ORDER, mLastUpdateOrder);
     }
@@ -84,7 +88,7 @@ public class MoviesListFragment extends Fragment {
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         if (needToUpdateMoviesList()) {
             updateMoviesList();
@@ -114,8 +118,9 @@ public class MoviesListFragment extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.movies_list, container, false);
 
@@ -124,13 +129,14 @@ public class MoviesListFragment extends Fragment {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
 
-            if (getActivity().getResources().getConfiguration().orientation == Configuration
+            if (Objects.requireNonNull(getActivity()).getResources().getConfiguration().orientation == Configuration
                     .ORIENTATION_PORTRAIT) {
                 mColumnCount = AppConstants.PORTRAIT_COLUMN_COUNT;
             } else {
                 mColumnCount = AppConstants.LANDSCAPE_COLUMN_COUNT;
             }
 
+            //noinspection ConstantConditions,ConstantConditions
             if (mColumnCount <= 1) {
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                 recyclerView.setLayoutManager(linearLayoutManager);
@@ -168,7 +174,8 @@ public class MoviesListFragment extends Fragment {
         void onMoviesListInteraction(Movie item);
     }
 
-    // AsyncTask to fetch The Movie DB data. Permet d'obtenir les donnees sur un film ou serie de le bas de données
+
+    // AsyncTask to fetch The Movie DB data. Permet d'obtenir les donnees sur un film ou serie de la base de données
     public class FetchMoviesTask extends AsyncTask<String, Void, Movie[]> {
 
         private Movie[] getMoviesDataFromJson(String moviesJsonStr)
@@ -282,7 +289,7 @@ public class MoviesListFragment extends Fragment {
                     // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
                     // But it does make debugging a *lot* easier if you print out the completed
                     // buffer for debugging.
-                    buffer.append(line + "\n");
+                    buffer.append(line).append("\n");
                 }
 
                 if (buffer.length() == 0) {
@@ -324,10 +331,7 @@ public class MoviesListFragment extends Fragment {
         protected void onPostExecute(Movie[] result) {
             if (result != null) {
                 mMoviesAdapter.clearRecyclerViewData();
-                for (Movie movieObj : result) {
-                    mMoviesList.add(movieObj);
-
-                }
+                Collections.addAll(mMoviesList, result);
                 //mMoviesAdapter.notifyItemInserted(mMoviesList.size()-1);
                 mMoviesAdapter.notifyItemRangeInserted(0, result.length);
 

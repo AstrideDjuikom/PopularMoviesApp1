@@ -1,5 +1,6 @@
 package com.example.astri.popularmovies;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,17 +17,18 @@ import java.util.zip.Inflater;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
 
-    private final List<Movie>mMoviesItemList;
+    private final List<Movie>mMoviesList;
     private final MoviesListFragment.OnMoviesListInteractionListener mListener;
 
 
 public MoviesAdapter(List<Movie> moviesItemList,MoviesListFragment.OnMoviesListInteractionListener onMoviesListInteractionListener){
-    mMoviesItemList=moviesItemList;
+    mMoviesList=moviesItemList;
     mListener=onMoviesListInteractionListener;
 }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_item, parent, false);
         return new ViewHolder(view);
     }
@@ -34,8 +36,8 @@ public MoviesAdapter(List<Movie> moviesItemList,MoviesListFragment.OnMoviesListI
 
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-    holder.mMovieItem=mMoviesItemList.get(position);
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+    holder.mMovieItem=mMoviesList.get(position);
         Glide.with(holder.mMoviePoster.getContext()).load(holder.mMovieItem.getPosterUri()).dontTransform().into(holder.mMoviePoster);
         holder.mMovieTextView.setText(holder.mMovieItem.getTitle());
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -50,21 +52,20 @@ public MoviesAdapter(List<Movie> moviesItemList,MoviesListFragment.OnMoviesListI
 
     @Override
     public int getItemCount() {
-        return mMoviesItemList.size();
+        return mMoviesList.size();
     }
 
     public void clearRecyclerViewData() {
-    int size= mMoviesItemList.size();
-
-    if(size>0){
-        for(int i=0;i<size;i++){
-            mMoviesItemList.remove(0);
+        int size = mMoviesList.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                mMoviesList.remove(0);
+            }
+            notifyItemRangeRemoved(0, size);
         }
-        notifyItemRangeChanged(0,size);
-    }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
 //definition et initialisation des elements de notre ViewHolder
         private Movie mMovieItem;

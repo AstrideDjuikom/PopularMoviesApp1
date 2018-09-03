@@ -62,7 +62,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate ( final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
 
