@@ -15,4 +15,9 @@
     <dimen name="movie_info_contents_margin_bottom">10dp</dimen>
     <dimen name="text_size_body">14sp</dimen>
     <dimen name="movie_info_overview_header_margin_top">25dp</dimen>
+    <dimen name="margin_relative_top">10dp</dimen>
+    <dimen name="details_relative_margin_end">15dp</dimen>
+    <dimen name="video_item_drawable_padding">3dp</dimen>
+    <dimen name="movie_item_mipmap_padding">2dp</dimen>
+    <dimen name="recycler_view_column_width">180dp</dimen>
 </resources>
