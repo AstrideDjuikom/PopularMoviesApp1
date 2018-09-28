@@ -1,5 +1,7 @@
 package com.example.astri.popularmovies.view;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -61,6 +63,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         .getString(preference.getKey(), ""));
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     protected void onCreate ( final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +97,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     //inner class with main options
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class MainPreferenceFragment extends  PreferenceFragment {
+        @TargetApi(Build.VERSION_CODES.HONEYCOMB)
         @Override
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);

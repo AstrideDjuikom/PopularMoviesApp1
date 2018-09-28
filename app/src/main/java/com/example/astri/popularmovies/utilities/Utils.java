@@ -2,6 +2,7 @@ package com.example.astri.popularmovies.utilities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -28,6 +29,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.ResourceBundle;
 
 // Utility class
 public class Utils {
@@ -168,11 +170,11 @@ public class Utils {
     }
 
     // Method that checks if current Sort preference is set to Favorite
-    public static boolean isFavoriteSort(Context ctx) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String currentSort = preferences.getString(ctx.getString(R.string.pref_sort_order_key),
-                ctx.getString(R.string.pref_popular_value));
-        return TextUtils.equals(currentSort, ctx.getString(R.string.pref_favorites));
+   /* public static boolean isFavoriteSort(Context context) {
+       SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String currentSort = preferences.getString(context.getString(R.string.pref_sort_order_key),
+                context.getString(R.string.pref_popular_value));
+        return TextUtils.equals(currentSort, context.getString(R.string.pref_favorites));
 
     }
 

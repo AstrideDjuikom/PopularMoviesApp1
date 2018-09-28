@@ -1,18 +1,14 @@
 package com.example.astri.popularmovies.data;
 
 import android.content.ContentProvider;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
-import static android.provider.UserDictionary.Words.CONTENT_URI;
 
 public class FavoriteMoviesProvider  extends ContentProvider {
 

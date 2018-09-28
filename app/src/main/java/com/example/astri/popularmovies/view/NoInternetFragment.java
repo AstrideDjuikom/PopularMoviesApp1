@@ -36,7 +36,7 @@ public class NoInternetFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_no_internet,container, false);
-        Button retryButton = (Button) view.findViewById(R.id.retry_button);
+        Button retryButton = view.findViewById(R.id.retry_button);
         retryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

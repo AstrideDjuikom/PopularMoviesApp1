@@ -6,11 +6,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -42,6 +44,9 @@ import com.example.astri.popularmovies.model.Video;
 import com.example.astri.popularmovies.service.MoviesIntentService;
 import com.example.astri.popularmovies.utilities.AppConstants;
 import com.example.astri.popularmovies.utilities.Utils;
+
+@SuppressWarnings("ALL")
+
 
 public class DetailsFragment extends Fragment {
 
@@ -96,11 +101,22 @@ public class DetailsFragment extends Fragment {
         if (getArguments() != null) {
             mMovie = getArguments().getParcelable(ARG_MOVIE);
             mIsFavoriteMovie = isFavoriteMovie(mContext, mMovie);
-            mIsFavoriteSort = Utils.isFavoriteSort(mContext);
+            mIsFavoriteSort = isFavoriteSort(mContext);
         }
 
         setHasOptionsMenu(true);
     }
+
+
+    // Method that checks if current Sort preference is set to Favorite
+    public static boolean isFavoriteSort(Context ctx) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        String currentSort = preferences.getString(ctx.getString(R.string.pref_sort_order_key),
+                ctx.getString(R.string.pref_popular_value));
+        return TextUtils.equals(currentSort, ctx.getString(R.string.pref_favorites_value));
+
+    }
+
 
 
     @Override
@@ -117,7 +133,7 @@ public class DetailsFragment extends Fragment {
 
     private boolean isFavoriteMovie(Context context, Movie movie) {
         String movieID = movie.getId();
-        Cursor cursor = context.getContentResolver().query(FavoriteMoviesContract.MoviesEntry
+        Cursor cursor =context.getContentResolver().query(FavoriteMoviesContract.MoviesEntry
                         .CONTENT_URI, null,
                 FavoriteMoviesContract.MoviesEntry._ID + " = " + movieID, null, null);
         if (cursor != null && cursor.moveToNext()) {
@@ -188,12 +204,12 @@ public class DetailsFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_details, container, false);
 
-        mPosterImageView = (ImageView) view.findViewById(R.id.poster);
+        mPosterImageView = view.findViewById(R.id.poster);
 
-        mVideosContainer = (LinearLayout) view.findViewById(R.id.videos_container);
-        mVideosExpandable = (LinearLayout) view.findViewById(R.id.movies_expand);
-        mReviewsContainer = (LinearLayout) view.findViewById(R.id.reviews_container);
-        mReviewsExpandable = (LinearLayout) view.findViewById(R.id.reviews_expand);
+        mVideosContainer = view.findViewById(R.id.videos_container);
+        mVideosExpandable = view.findViewById(R.id.movies_expand);
+        mReviewsContainer = view.findViewById(R.id.reviews_container);
+        mReviewsExpandable = view.findViewById(R.id.reviews_expand);
 
         setExpandListener();
 
@@ -218,7 +234,7 @@ public class DetailsFragment extends Fragment {
             overviewView.setText(movie.getOverview());
         }
 
-        ImageButton starButton = (ImageButton) view.findViewById(R.id.rated_star_button);
+        ImageButton starButton = view.findViewById(R.id.rated_star_button);
         starButton.setOnClickListener(mStarButtonOnClickListener);
 
         if (mIsFavoriteMovie) {
@@ -229,7 +245,7 @@ public class DetailsFragment extends Fragment {
 
         starButton.setVisibility(View.VISIBLE);
 
-        FrameLayout detailFrame = (FrameLayout) view.findViewById(R.id.details_frame);
+        FrameLayout detailFrame = view.findViewById(R.id.details_frame);
         detailFrame.setVisibility(View.VISIBLE);
 
         populateVideosLayout(mContext);
@@ -300,17 +316,17 @@ public class DetailsFragment extends Fragment {
 
                 for (Review review : reviews) {
                     LinearLayout reviewLayout = (LinearLayout) layoutInflater.inflate(R.layout.review_item, null);
-                    TextView authorTextView = (TextView) reviewLayout.findViewById(R.id.author_name);
-                    TextView contentTextView = (TextView) reviewLayout.findViewById(R.id.review_content);
+                    TextView authorTextView = reviewLayout.findViewById(R.id.author_name);
+                    TextView contentTextView = reviewLayout.findViewById(R.id.review_content);
                     authorTextView.setText(review.getReview_author());
                     contentTextView.setText(review.getReview_content());
                     mReviewsContainer.addView(reviewLayout);
                 }
 
-                TextView reviewsHeader = (TextView) mReviewsExpandable
+                TextView reviewsHeader = mReviewsExpandable
                         .findViewById(R.id.reviews_header);
                 reviewsHeader.setText(String.format(getString(R.string.header_reviews),reviews.length));
-                ImageView expandIndicator = (ImageView) mReviewsExpandable.findViewById(R.id.reviews_expand_indicator);
+                ImageView expandIndicator = mReviewsExpandable.findViewById(R.id.reviews_expand_indicator);
                 setExpandIndicator(expandIndicator, mReviewsExpanded);
 
                 if (mReviewsExpanded) {
@@ -320,7 +336,7 @@ public class DetailsFragment extends Fragment {
                 }
 
             } else {
-                TextView reviewsHeader = (TextView) mReviewsExpandable.findViewById(R.id.reviews_header);
+                TextView reviewsHeader = mReviewsExpandable.findViewById(R.id.reviews_header);
                 reviewsHeader.setText(String.format(getString(R.string.header_reviews), 0));
             }
         }
@@ -370,7 +386,7 @@ public class DetailsFragment extends Fragment {
         public void onClick(View view) {
             if (view.getId() == R.id.movies_expand) {
                 if (mVideosContainer != null && mVideosExpandable != null) {
-                    ImageView expandIndicator = (ImageView) mVideosExpandable
+                    ImageView expandIndicator = mVideosExpandable
                             .findViewById(R.id.videos_expand_indicator);
                     if (mVideosContainer.getVisibility() == View.GONE) {
                         mVideosContainer.setVisibility(View.VISIBLE);
@@ -384,7 +400,7 @@ public class DetailsFragment extends Fragment {
                 }
             } else if (view.getId() == R.id.reviews_expand) {
                 if (mReviewsContainer != null && mReviewsExpandable != null) {
-                    ImageView expandIndicator = (ImageView) mReviewsExpandable
+                    ImageView expandIndicator = mReviewsExpandable
                             .findViewById(R.id.reviews_expand_indicator);
                     if (mReviewsContainer.getVisibility() == View.GONE) {
                         mReviewsContainer.setVisibility(View.VISIBLE);
@@ -466,7 +482,7 @@ public class DetailsFragment extends Fragment {
                 for (int i = 0; i < videos.length; i++) {
                     LinearLayout videoLayout = (LinearLayout) layoutInflater.inflate(R.layout
                             .video_item, null);
-                    Button videoButton = (Button) videoLayout.findViewById(R.id.video_button);
+                    Button videoButton = videoLayout.findViewById(R.id.video_button);
                     videoButton.setText(String.format(context.getString(R.string.trailer_item),
                             i + 1));
                     // Set View's tag with YouTube video id
@@ -475,9 +491,9 @@ public class DetailsFragment extends Fragment {
                     mVideosContainer.addView(videoLayout);
                 }
 
-                TextView reviewsHeader = (TextView) mVideosExpandable.findViewById(R.id.video_header);
+                TextView reviewsHeader = mVideosExpandable.findViewById(R.id.video_header);
                 reviewsHeader.setText(String.format(getString(R.string.header_videos),videos.length));
-                ImageView expandIndicator = (ImageView) mVideosExpandable.findViewById(R.id.videos_expand_indicator);
+                ImageView expandIndicator = mVideosExpandable.findViewById(R.id.videos_expand_indicator);
                 setExpandIndicator(expandIndicator, mVideosExpanded);
 
                 if (mVideosExpanded) {
@@ -488,7 +504,7 @@ public class DetailsFragment extends Fragment {
 
             } else {
 
-                TextView reviewsHeader = (TextView) mVideosExpandable.findViewById(R.id.video_header);
+                TextView reviewsHeader = mVideosExpandable.findViewById(R.id.video_header);
                 reviewsHeader.setText(String.format(getString(R.string.header_videos), 0));
             }
         }
@@ -632,6 +648,5 @@ public class DetailsFragment extends Fragment {
 
             return moviesRemoved;
     }
-
 
 }

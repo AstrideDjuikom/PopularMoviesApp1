@@ -95,8 +95,8 @@ public class FavoriteMoviesAdapter extends RecyclerView.Adapter<FavoriteMoviesAd
         public MyViewHolder(View view) {
             super(view);
             mView = view;
-            mPosterView = (ImageView) view.findViewById(R.id.poster);
-            mTitle = (TextView) view.findViewById(R.id.title);
+            mPosterView = view.findViewById(R.id.poster);
+            mTitle = view.findViewById(R.id.title);
             mCursorPosition = -1;
         }
     }

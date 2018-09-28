@@ -1,21 +1,12 @@
 package com.example.astri.popularmovies.view;
 
-import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -29,7 +20,7 @@ import com.example.astri.popularmovies.model.Movie;
 import com.example.astri.popularmovies.utilities.AppConstants;
 import com.example.astri.popularmovies.utilities.Utils;
 
-import java.util.Objects;
+import static com.example.astri.popularmovies.view.DetailsFragment.isFavoriteSort;
 
 public class MainActivity extends AppCompatActivity implements OnLoadingFragmentListener, OnMoviesListFragmentListener,
         OnNoInternetFragmentListener {
@@ -197,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements OnLoadingFragment
     private void changeNoInternetVisibility(boolean internetConnected) {
         //According to the current internet connection
 
-        if (internetConnected || Utils.isFavoriteSort(this)) {
+        if (internetConnected || isFavoriteSort(this)) {
             mNoInternetConnectionFragmentContainer.setVisibility(View.GONE);
             mMoviesFragmentContainer.setVisibility(View.VISIBLE);
 

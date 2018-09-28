@@ -76,8 +76,8 @@ public MoviesAdapter(List<Movie> moviesItemList, OnMoviesListFragmentListener on
         public ViewHolder(View itemView) {
             super(itemView);
             mView=itemView;
-            mMoviePoster=(ImageView)itemView.findViewById(R.id.movie_poster);
-            mMovieTextView=(TextView)itemView.findViewById(R.id.movie_title);
+            mMoviePoster= itemView.findViewById(R.id.movie_poster);
+            mMovieTextView= itemView.findViewById(R.id.movie_title);
         }
     }
 }

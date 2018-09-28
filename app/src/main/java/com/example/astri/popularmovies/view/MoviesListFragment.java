@@ -5,25 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -35,7 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.astri.popularmovies.BuildConfig;
 import com.example.astri.popularmovies.R;
 import com.example.astri.popularmovies.data.FavoriteMoviesContract;
 import com.example.astri.popularmovies.listener.OnLoadingFragmentListener;
@@ -45,21 +34,8 @@ import com.example.astri.popularmovies.service.MoviesIntentService;
 import com.example.astri.popularmovies.utilities.AppConstants;
 import com.example.astri.popularmovies.utilities.Utils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
 public class MoviesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -98,13 +74,24 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!Utils.isFavoriteSort(mContext)) {
+
+        if (!isFavoriteSort(mContext)) {
             if (savedInstanceState == null) {
                 updateMoviesList();
             }
         }
         setHasOptionsMenu(true);
     }
+
+    // Method that checks if current Sort preference is set to Favorite
+    public static boolean isFavoriteSort(Context ctx) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        String currentSort = preferences.getString(ctx.getString(R.string.pref_sort_order_key),
+                ctx.getString(R.string.pref_popular_value));
+        return TextUtils.equals(currentSort, ctx.getString(R.string.pref_favorites_value));
+
+    }
+
 
 
     @Override
@@ -151,7 +138,7 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
             updateMoviesList();
         }
 
-        if (Utils.isFavoriteSort(mContext)) {
+        if (isFavoriteSort(mContext)) {
             if (mOnLoadingFragmentListener != null) {
                 mOnLoadingFragmentListener.onLoadingDisplay(false, false);
             }
@@ -169,7 +156,7 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
 
     // Starts AsyncTask to fetch The Movie DB API
     public void updateMoviesList() {
-        if (Utils.isInternetConnected(getActivity()) && !Utils.isFavoriteSort(mContext)) {
+        if (Utils.isInternetConnected(getActivity()) && !isFavoriteSort(mContext)) {
             String currentSortOrder = Utils.getSortPref(mContext);
             mLastUpdateOrder = currentSortOrder;
             Intent intent = new Intent(mContext, MoviesIntentService.class);
