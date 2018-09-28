@@ -20,8 +20,7 @@ import com.example.astri.popularmovies.model.Movie;
 import com.example.astri.popularmovies.utilities.AppConstants;
 import com.example.astri.popularmovies.utilities.Utils;
 
-import static com.example.astri.popularmovies.view.DetailsFragment.isFavoriteSort;
-
+import static com.example.astri.popularmovies.utilities.Utils.isFavoriteSort;
 public class MainActivity extends AppCompatActivity implements OnLoadingFragmentListener, OnMoviesListFragmentListener,
         OnNoInternetFragmentListener {
 
@@ -188,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements OnLoadingFragment
     private void changeNoInternetVisibility(boolean internetConnected) {
         //According to the current internet connection
 
-        if (internetConnected || isFavoriteSort(this)) {
+        if (internetConnected || Utils.isFavoriteSort(this)) {
             mNoInternetConnectionFragmentContainer.setVisibility(View.GONE);
             mMoviesFragmentContainer.setVisibility(View.VISIBLE);
 

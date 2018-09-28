@@ -35,7 +35,6 @@ import java.util.ResourceBundle;
 public class Utils {
 
     private static final String LOG_TAG = Utils.class.getSimpleName();
-
     // Method based on http://stackoverflow.com/
     // questions/9113895/how-to-check-if-an-imageview-is-attached-with-image-in-android
     public static boolean hasImage(ImageView view) {
@@ -165,16 +164,15 @@ public class Utils {
 
     // Method that checks if currentSort parameters is Favorite Sort
     public static boolean isFavoriteSort(Context ctx, String currentSort) {
-        return TextUtils.equals(currentSort, ctx.getString(R.string.pref_favorites));
+        return TextUtils.equals(currentSort, ctx.getString(R.string.pref_favorites_value));
 
     }
 
     // Method that checks if current Sort preference is set to Favorite
-   /* public static boolean isFavoriteSort(Context context) {
-       SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String currentSort = preferences.getString(context.getString(R.string.pref_sort_order_key),
-                context.getString(R.string.pref_popular_value));
-        return TextUtils.equals(currentSort, context.getString(R.string.pref_favorites));
+    public static boolean isFavoriteSort(Context ctx) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        String currentSort = preferences.getString(ctx.getString(R.string.pref_sort_order_key),ctx.getString(R.string.pref_popular_value));
+        return TextUtils.equals(currentSort, ctx.getString(R.string.pref_favorites_value));
 
     }
 
@@ -204,5 +202,4 @@ public class Utils {
             e.printStackTrace();
             return inputDateString;
         }
-    }
-}
+    }}

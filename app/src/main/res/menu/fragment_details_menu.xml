@@ -8,6 +8,7 @@
     <item
         android:id="@+id/menu_item_share"
         android:title="@string/title_menu_share"
-        android:showAsAction="always" />
+        app:showAsAction="always"
+        support:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>
 
 </menu>

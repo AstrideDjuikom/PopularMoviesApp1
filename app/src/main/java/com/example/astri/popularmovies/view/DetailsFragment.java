@@ -45,6 +45,8 @@ import com.example.astri.popularmovies.service.MoviesIntentService;
 import com.example.astri.popularmovies.utilities.AppConstants;
 import com.example.astri.popularmovies.utilities.Utils;
 
+import static com.example.astri.popularmovies.utilities.Utils.isFavoriteSort;
+
 @SuppressWarnings("ALL")
 
 
@@ -52,7 +54,6 @@ public class DetailsFragment extends Fragment {
 
     public static final String LOG_TAG = DetailsFragment.class.getSimpleName();
     public static final String ARG_MOVIE = "arg_movie";
-    private Movie movie;
     private static final String SAVE_MOVIE = "save_movie";
     private static final String SAVE_FAVORITE_MOVIE = "save_favorite_movie";
     private static final String SAVE_FAVORITE_SORT = "save_favorite_sort";
@@ -62,7 +63,7 @@ public class DetailsFragment extends Fragment {
     private static final String SAVE_SHARE_MENU_VISIBILITY = "save_share_menu_visibility";
 
     private final ResponseReceiver mReceiver = new ResponseReceiver();
-    private Context mContext;
+    public Context mContext=getContext();
     private Movie mMovie;
     private LinearLayout mVideosExpandable;
     private LinearLayout mVideosContainer;
@@ -78,6 +79,7 @@ public class DetailsFragment extends Fragment {
     private boolean mVideosExpanded;
     private boolean mReviewsExpanded;
     private boolean mIsShareMenuItemVisible;
+    private SharedPreferences sharedPref;
 
     //empty constructor
 
@@ -97,6 +99,7 @@ public class DetailsFragment extends Fragment {
 
     public void onCreate(Bundle savedInstancedState) {
         super.onCreate(savedInstancedState);
+        mContext=getContext();
 
         if (getArguments() != null) {
             mMovie = getArguments().getParcelable(ARG_MOVIE);
@@ -132,6 +135,7 @@ public class DetailsFragment extends Fragment {
     }
 
     private boolean isFavoriteMovie(Context context, Movie movie) {
+        context=getActivity();
         String movieID = movie.getId();
         Cursor cursor =context.getContentResolver().query(FavoriteMoviesContract.MoviesEntry
                         .CONTENT_URI, null,
@@ -170,8 +174,7 @@ public class DetailsFragment extends Fragment {
     private void setShareMenuItemAction() {
         if (mMovie != null && mMovie.getVideos() != null && mMovie.getVideos().length > 0) {
             String videoKey = mMovie.getVideos()[0].getVideo_key();
-            if (!TextUtils.isEmpty(videoKey) && mShareActionProvider != null
-                    && mShareMenuItem != null) {
+            if (!TextUtils.isEmpty(videoKey) && mShareActionProvider != null && mShareMenuItem != null) {
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(Intent.EXTRA_TEXT, AppConstants.YOUTUBE_BASE_URL + videoKey);
@@ -213,28 +216,28 @@ public class DetailsFragment extends Fragment {
 
         setExpandListener();
 
-        Glide.with(mContext).load(mMovie.getPosterUri()).dontAnimate().into(mPosterImageView);
+        Glide.with(getContext()).load(mMovie.getPosterUri()).dontAnimate().into(mPosterImageView);
 
        // ImageView posterView = view.findViewById(R.id.poster);
-       // Glide.with(getActivity()).load(movie.getPosterUri()).into(posterView);
+      // Glide.with(getActivity()).load(mMovie.getPosterUri()).into(mPosterImageView);
 
         TextView titleView = view.findViewById(R.id.title_content);
-        titleView.setText(movie.getTitle());
+        titleView.setText(mMovie.getTitle());
 
         TextView releaseDateView = view.findViewById(R.id.release_date_content);
-        releaseDateView.setText(movie.getReleaseDate());
+        releaseDateView.setText(mMovie.getReleaseDate());
 
         TextView averageView = view.findViewById(R.id.vote_average_content);
-        averageView.setText(movie.getVoteAverage());
+        averageView.setText(mMovie.getVoteAverage());
 
         TextView overviewView = view.findViewById(R.id.overview_content);
 
         // default text: @string/overview_not_available
-        if (!TextUtils.isEmpty(movie.getOverview())) {
-            overviewView.setText(movie.getOverview());
+        if (!TextUtils.isEmpty(mMovie.getOverview())) {
+            overviewView.setText(mMovie.getOverview());
         }
 
-        ImageButton starButton = view.findViewById(R.id.rated_star_button);
+        ImageButton starButton =(ImageButton) view.findViewById(R.id.rated_star_button);
         starButton.setOnClickListener(mStarButtonOnClickListener);
 
         if (mIsFavoriteMovie) {
@@ -284,7 +287,7 @@ public class DetailsFragment extends Fragment {
                 mMovie.setReviews(reviews);
 
                 setExpandListener();
-                populateVideosLayout(mContext);
+                populateVideosLayout(getContext());
                 populateReviewsLayout(mContext);
                 setShareMenuItemAction();
             } else {
@@ -299,10 +302,10 @@ public class DetailsFragment extends Fragment {
         }
     }
 
+
     //cette méthode charge les avis dans le cadre expansible reservé pour contenir les avis apres une requete de l'utilisateur
-
-    private void populateReviewsLayout(Context context) {
-
+    // Method that populates Reviews expandable layout after the network request
+    private void populateReviewsLayout(Context ctx) {
         Review[] reviews = mMovie.getReviews();
 
         if (mReviewsContainer != null && mReviewsExpandable != null) {
@@ -312,21 +315,20 @@ public class DetailsFragment extends Fragment {
                 }
 
                 LayoutInflater layoutInflater = (LayoutInflater)
-                        context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                        ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
                 for (Review review : reviews) {
                     LinearLayout reviewLayout = (LinearLayout) layoutInflater.inflate(R.layout.review_item, null);
-                    TextView authorTextView = reviewLayout.findViewById(R.id.author_name);
-                    TextView contentTextView = reviewLayout.findViewById(R.id.review_content);
+                    TextView authorTextView = (TextView) reviewLayout.findViewById(R.id.author_name);
+                    TextView contentTextView = (TextView) reviewLayout.findViewById(R.id.review_content);
                     authorTextView.setText(review.getReview_author());
                     contentTextView.setText(review.getReview_content());
                     mReviewsContainer.addView(reviewLayout);
                 }
 
-                TextView reviewsHeader = mReviewsExpandable
-                        .findViewById(R.id.reviews_header);
+                TextView reviewsHeader = (TextView) mReviewsExpandable.findViewById(R.id.reviews_header);
                 reviewsHeader.setText(String.format(getString(R.string.header_reviews),reviews.length));
-                ImageView expandIndicator = mReviewsExpandable.findViewById(R.id.reviews_expand_indicator);
+                ImageView expandIndicator = (ImageView) mReviewsExpandable.findViewById(R.id.reviews_expand_indicator);
                 setExpandIndicator(expandIndicator, mReviewsExpanded);
 
                 if (mReviewsExpanded) {
@@ -336,11 +338,55 @@ public class DetailsFragment extends Fragment {
                 }
 
             } else {
-                TextView reviewsHeader = mReviewsExpandable.findViewById(R.id.reviews_header);
+                TextView reviewsHeader = (TextView) mReviewsExpandable.findViewById(R.id.reviews_header);
                 reviewsHeader.setText(String.format(getString(R.string.header_reviews), 0));
             }
         }
+    }
 
+    //cette méthode charge les videos dans le cadre expansible reservé pour contenir les videos apres une requete de l'utilisateur
+    // Method that populates Videos expandable layout after the network request
+    private void populateVideosLayout(Context ctx) {
+        Video[] videos = mMovie.getVideos();
+
+        if (mVideosContainer != null && mVideosExpandable != null) {
+            if (videos != null && videos.length > 0) {
+                if (mVideosContainer.getChildCount() > 0) {
+                    mVideosContainer.removeAllViews();
+                }
+
+                LayoutInflater layoutInflater = (LayoutInflater)
+                        ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                for (int i = 0; i < videos.length; i++) {
+                    LinearLayout videoLayout = (LinearLayout) layoutInflater.inflate(R.layout
+                            .video_item, null);
+                    Button videoButton = (Button) videoLayout.findViewById(R.id.video_button);
+                    videoButton.setText(String.format(ctx.getString(R.string.trailer_item),
+                            i + 1));
+                    // Set View's tag with YouTube video id
+                    videoButton.setTag(videos[i].getVideo_key());
+                    videoButton.setOnClickListener(mVideoButtonOnClickListener);
+                    mVideosContainer.addView(videoLayout);
+                }
+
+                TextView videoHeader = (TextView) mVideosExpandable.findViewById(R.id.video_header);
+                videoHeader.setText(String.format(getString(R.string.header_videos),videos.length));
+                ImageView expandIndicator = (ImageView) mVideosExpandable.findViewById(R.id.videos_expand_indicator);
+                setExpandIndicator(expandIndicator, mVideosExpanded);
+
+                if (mVideosExpanded) {
+                    mVideosContainer.setVisibility(View.VISIBLE);
+                } else {
+                    mVideosContainer.setVisibility(View.GONE);
+                }
+
+            } else {
+
+                TextView videos_header = (TextView) mVideosExpandable.findViewById(R.id.video_header);
+                videos_header.setText(String.format(getString(R.string.header_videos), 0));
+            }
+        }
     }
 
 
@@ -355,10 +401,11 @@ public class DetailsFragment extends Fragment {
                                 .ACTION_EXTRA_INFO_RESULT));
             }
             if (!mIsFullyLoaded && !mIsFavoriteSort) {
-                Intent intent = new Intent(mContext, MoviesIntentService.class);
+                //getContext instead of mContext
+                Intent intent = new Intent(getContext(), MoviesIntentService.class);
                 intent.setAction(AppConstants.ACTION_EXTRA_INFO_REQUEST);
                 intent.putExtra(MoviesIntentService.EXTRA_INFO_MOVIE_ID, mMovie.getId());
-                mContext.startService(intent);
+                getContext().startService(intent);
 
                 if (mLoadingListener != null) {
                     mLoadingListener.onLoadingDisplay(true, true);
@@ -400,8 +447,7 @@ public class DetailsFragment extends Fragment {
                 }
             } else if (view.getId() == R.id.reviews_expand) {
                 if (mReviewsContainer != null && mReviewsExpandable != null) {
-                    ImageView expandIndicator = mReviewsExpandable
-                            .findViewById(R.id.reviews_expand_indicator);
+                    ImageView expandIndicator = mReviewsExpandable.findViewById(R.id.reviews_expand_indicator);
                     if (mReviewsContainer.getVisibility() == View.GONE) {
                         mReviewsContainer.setVisibility(View.VISIBLE);
                         mReviewsExpanded = true;
@@ -461,54 +507,6 @@ public class DetailsFragment extends Fragment {
         } else {
             expandIndicator.setBackgroundResource(R.mipmap.ic_expand);
         }
-    }
-
-
-    //cette méthode charge les videos dans le cadre expansible reservé pour contenir les videos apres une requete de l'utilisateur
-
-    private void populateVideosLayout(Context context) {
-
-        Video[] videos = mMovie.getVideos();
-
-        if (mVideosContainer != null && mVideosExpandable != null) {
-            if (videos != null && videos.length > 0) {
-                if (mVideosContainer.getChildCount() > 0) {
-                    mVideosContainer.removeAllViews();
-                }
-
-                LayoutInflater layoutInflater = (LayoutInflater)
-                        context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-                for (int i = 0; i < videos.length; i++) {
-                    LinearLayout videoLayout = (LinearLayout) layoutInflater.inflate(R.layout
-                            .video_item, null);
-                    Button videoButton = videoLayout.findViewById(R.id.video_button);
-                    videoButton.setText(String.format(context.getString(R.string.trailer_item),
-                            i + 1));
-                    // Set View's tag with YouTube video id
-                    videoButton.setTag(videos[i].getVideo_key());
-                    videoButton.setOnClickListener(mVideoButtonOnClickListener);
-                    mVideosContainer.addView(videoLayout);
-                }
-
-                TextView reviewsHeader = mVideosExpandable.findViewById(R.id.video_header);
-                reviewsHeader.setText(String.format(getString(R.string.header_videos),videos.length));
-                ImageView expandIndicator = mVideosExpandable.findViewById(R.id.videos_expand_indicator);
-                setExpandIndicator(expandIndicator, mVideosExpanded);
-
-                if (mVideosExpanded) {
-                    mVideosContainer.setVisibility(View.VISIBLE);
-                } else {
-                    mVideosContainer.setVisibility(View.GONE);
-                }
-
-            } else {
-
-                TextView reviewsHeader = mVideosExpandable.findViewById(R.id.video_header);
-                reviewsHeader.setText(String.format(getString(R.string.header_videos), 0));
-            }
-        }
-
     }
 
 
@@ -648,5 +646,6 @@ public class DetailsFragment extends Fragment {
 
             return moviesRemoved;
     }
-
+//NB: Dans les fragments , il est mieux d'utiliser getContext() au lieu de context,
+// sinon il y aura preque toujours une erreur de NullPointerException
 }

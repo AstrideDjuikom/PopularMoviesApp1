@@ -45,8 +45,7 @@ public class FavoriteMoviesAdapter extends RecyclerView.Adapter<FavoriteMoviesAd
     private void onBindViewHolder(final MyViewHolder holder, final Cursor cursor) {
         String movieTitle = cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract
                 .MoviesEntry.COLUMN_TITLE));
-        String posterUri = cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract
-                .MoviesEntry.COLUMN_POSTER_URI));
+        String posterUri = cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract.MoviesEntry.COLUMN_POSTER_URI));
         int cursorPosition = cursor.getPosition();
 
         holder.mCursorPosition = cursorPosition;
@@ -95,8 +94,8 @@ public class FavoriteMoviesAdapter extends RecyclerView.Adapter<FavoriteMoviesAd
         public MyViewHolder(View view) {
             super(view);
             mView = view;
-            mPosterView = view.findViewById(R.id.poster);
-            mTitle = view.findViewById(R.id.title);
+            mPosterView = (ImageView) view.findViewById(R.id.movie_poster);
+            mTitle = (TextView) view.findViewById(R.id.movie_title);
             mCursorPosition = -1;
         }
     }
